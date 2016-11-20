@@ -10,6 +10,9 @@ Metrics/BlockLength:
     - junk_drawer.gemspec
     - spec/**/*_spec.rb
 
+RSpec/ExampleLength:
+  Enabled: false
+
 # default disabled rules
 Style/AutoResourceCleanup:
   Enabled: true
