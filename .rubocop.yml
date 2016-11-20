@@ -1,0 +1,79 @@
+require: rubocop-rspec
+
+AllCops:
+  DefaultFormatter: fuubar
+  TargetRubyVersion: 2.3
+  DisplayCopNames: true
+
+Metrics/BlockLength:
+  Exclude:
+    - junk_drawer.gemspec
+    - spec/**/*_spec.rb
+
+# default disabled rules
+Style/AutoResourceCleanup:
+  Enabled: true
+
+Style/CollectionMethods:
+  Enabled: true
+  PreferredMethods:
+    collect: 'map'
+    collect!: 'map!'
+    inject: 'reduce'
+    find: 'detect'
+    find_all: 'select'
+
+Style/FirstArrayElementLineBreak:
+  Enabled: true
+
+Style/FirstHashElementLineBreak:
+  Enabled: true
+
+Style/FirstMethodArgumentLineBreak:
+  Enabled: true
+
+Style/FirstMethodParameterLineBreak:
+  Enabled: true
+
+Style/MultilineArrayBraceLayout:
+  Enabled: true
+
+Style/MultilineHashBraceLayout:
+  Enabled: true
+
+Style/MultilineMethodCallBraceLayout:
+  Enabled: true
+
+Style/MultilineMethodDefinitionBraceLayout:
+  Enabled: true
+
+Style/OptionHash:
+  Enabled: true
+
+Style/Send:
+  Enabled: true
+
+RSpec/VerifiedDoubles:
+  Enabled: true
+
+# non-conventional rules
+Style/LambdaCall:
+  EnforcedStyle: braces
+
+Style/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines
+
+Style/AccessModifierIndentation:
+  EnforcedStyle: outdent
+
+Style/TrailingCommaInLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/VariableNumber:
+  EnforcedStyle: snake_case

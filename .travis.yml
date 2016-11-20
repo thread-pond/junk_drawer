@@ -3,3 +3,7 @@ language: ruby
 rvm:
   - 2.3.1
 before_install: gem install bundler -v 1.13.6
+script:
+  - bundle exec rubocop
+  - bundle exec rake
+  - bundle exec rake build
