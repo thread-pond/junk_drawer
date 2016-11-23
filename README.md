@@ -1,11 +1,7 @@
 # JunkDrawer
 
-Welcome to your new gem! In this directory, you'll find the files you need to
-be able to package up your Ruby library into a gem. Put your Ruby code in the
-file `lib/junk_drawer`. To experiment with that code, run `bin/console` for an
-interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+`JunkDrawer` is a gem providing exactly one (and someday more) random utility
+that is commonly useful across projects.
 
 ## Installation
 
@@ -25,7 +21,71 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Callable
+
+`JunkDrawer::Callable` is a module that provides constraints and conveniences
+for objects that implement a single method `#call`. It comes with the
+philosophy that objects that *do* something, should do only one thing. When including the `JunkDrawer::Callable` in one of your classes, you will get the following:
+
+1) It raises an error if you try to implement a public method other than
+  `#call`.
+
+  ```ruby
+  class Foo
+    include JunkDrawer::Callable
+    def bar # Bad: can't define public method "#bar"
+    end
+  end
+  ```
+
+  produces:
+
+  ```
+  JunkDrawer::CallableError: invalid method name bar, only public method allowed is "call"
+  ```
+
+  Private methods are fine:
+
+  ```ruby
+  class Foo
+    include JunkDrawer::Callable
+  private
+    def bar # private methods are okay!
+    end
+  end
+  ```
+
+2) It delegates `call` on the class to a new instance:
+
+  ```ruby
+  class Foo
+    include JunkDrawer::Callable
+    def call(stuff)
+      puts "I am a Foo! I've got #{stuff}"
+    end
+  end
+  ```
+
+  ```
+  > Foo.call('a brochure')
+  I am a Foo! I've got a brochure
+  > Foo.new.call('a brochure')
+  I am a Foo! I've got a brochure
+  ```
+
+3) It implements `to_proc`, both on the class and instance, allowing operations
+  such as:
+
+  ```
+  > ['puppies', 'a cold', 'cheeseburgers'].each(&Foo)
+  I am a Foo! I've got puppies
+  I am a Foo! I've got a cold
+  I am a Foo! I've got cheeseburgers
+  ```
+
+  See here for a great explanation of `to_proc` and the `&` operator:
+
+  http://www.brianstorti.com/understanding-ruby-idiom-map-with-symbol/
 
 ## Development
 
@@ -41,10 +101,9 @@ git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygem
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/[USERNAME]/junk_drawer. This project is intended to be a
+https://github.com/mockdeep/junk_drawer. This project is intended to be a
 safe, welcoming space for collaboration, and contributors are expected to
 adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
-
 
 ## License
 

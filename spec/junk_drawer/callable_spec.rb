@@ -52,4 +52,33 @@ RSpec.describe JunkDrawer::Callable do
       end
     end.not_to raise_error
   end
+
+  describe '#to_proc', '.to_proc' do
+    it 'returns a proc wrapping the call method' do
+      class MyCallableClass
+        include JunkDrawer::Callable
+
+        def call(arg)
+          arg * 2
+        end
+      end
+
+      expect([1, 2, 3].map(&MyCallableClass.new)).to eq [2, 4, 6]
+      expect([1, 2, 3].map(&MyCallableClass)).to eq [2, 4, 6]
+    end
+
+    it 'passes through multiple arguments' do
+      class MyCallableClass
+        include JunkDrawer::Callable
+
+        def call(arg_1, arg_2)
+          "#{arg_1} : #{arg_2}"
+        end
+      end
+
+      expected = ['a : b', 'c : d']
+      expect([%w(a b), %w(c d)].map(&MyCallableClass.new)).to eq expected
+      expect([%w(a b), %w(c d)].map(&MyCallableClass)).to eq expected
+    end
+  end
 end

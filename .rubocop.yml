@@ -13,6 +13,9 @@ Metrics/BlockLength:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/MultipleExpectations:
+  Enabled: false
+
 # default disabled rules
 Style/AutoResourceCleanup:
   Enabled: true
