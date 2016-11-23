@@ -21,7 +21,7 @@ Or install it yourself as:
 
 ## Usage
 
-### Callable
+### JunkDrawer::Callable
 
 `JunkDrawer::Callable` is a module that provides constraints and conveniences
 for objects that implement a single method `#call`. It comes with the
