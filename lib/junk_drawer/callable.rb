@@ -27,10 +27,18 @@ module JunkDrawer
       end
 
       def method_added(method_name)
-        return if method_name == :call || !public_method_defined?(method_name)
+        return if valid_callable_method?(method_name)
 
         raise CallableError, "invalid method name #{method_name}, " \
                             'only public method allowed is "call"'
+      end
+
+    private
+
+      def valid_callable_method?(method_name)
+        method_name == :call ||
+          !public_method_defined?(method_name) ||
+          method_name.to_s.start_with?('__')
       end
     end
 

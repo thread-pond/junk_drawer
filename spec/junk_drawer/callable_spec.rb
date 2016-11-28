@@ -80,5 +80,25 @@ RSpec.describe JunkDrawer::Callable do
       expect([%w(a b), %w(c d)].map(&MyCallableClass.new)).to eq expected
       expect([%w(a b), %w(c d)].map(&MyCallableClass)).to eq expected
     end
+
+    it 'copes gracefully with RSpec any_instance matchers' do
+      class MyCallableClass
+        include JunkDrawer::Callable
+
+        def call
+          'whatevs'
+        end
+      end
+
+      expect do
+        # rubocop:disable RSpec/AnyInstance
+        klass = MyCallableClass
+        allow_any_instance_of(klass).to receive(:call).and_return('thanks')
+        expect_any_instance_of(klass).to receive(:call).and_return('thanks')
+        # rubocop:enable RSpec/AnyInstance
+      end.not_to raise_error
+
+      expect(MyCallableClass.()).to eq 'thanks'
+    end
   end
 end
