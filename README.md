@@ -25,7 +25,9 @@ Or install it yourself as:
 
 `JunkDrawer::Callable` is a module that provides constraints and conveniences
 for objects that implement a single method `#call`. It comes with the
-philosophy that objects that *do* something, should do only one thing. When including the `JunkDrawer::Callable` in one of your classes, you will get the following:
+philosophy that objects that *do* something, should do only one thing. When
+including the `JunkDrawer::Callable` in one of your classes, you will get the
+following:
 
 1) It raises an error if you try to implement a public method other than
   `#call`.
@@ -86,6 +88,51 @@ philosophy that objects that *do* something, should do only one thing. When incl
   See here for a great explanation of `to_proc` and the `&` operator:
 
   http://www.brianstorti.com/understanding-ruby-idiom-map-with-symbol/
+
+-------------------------------------------------------------------------------
+
+### JunkDrawer::Notifier
+
+`JunkDrawer::Notifier` is a class that provides simple notification strategies
+for different environments. When you call it, it will send a notification via
+your selected strategy. The strategies available are as follows:
+
+1) `:raise` raises an error when you call the notifier:
+
+  ```ruby
+  JunkDrawer::Notifier.strategy = :raise
+  JunkDrawer::Notifier.call('some message', some: 'context')
+  ```
+
+  produces:
+
+  ```
+  JunkDrawer::NotifierError: some message, context: {:some=>"context"}
+  ```
+
+2) `:honeybadger` will send a notification to Honeybadger. You'll need to make
+  sure you have Honeybadger required in your application and configured for
+  this to work.
+
+3) `:null` is a noop. If you want to disable notifications temporarily, you can
+  configure the strategy to `:null`.
+
+If you're using Rails, you may want to configure `Notifier` based on the
+environment, so in your `config/environments/development.rb` you might have:
+
+```ruby
+config.after_initialize do
+  JunkDrawer::Notifier.strategy = :raise
+end
+```
+
+While in `production.rb` you might want:
+
+```ruby
+config.after_initialize do
+  JunkDrawer::Notifier.strategy = :honeybadger
+end
+```
 
 ## Development
 
