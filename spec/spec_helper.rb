@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative '../lib/junk_drawer'
 
 RSpec.configure do |config|

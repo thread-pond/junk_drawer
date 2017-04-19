@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # rubocop:disable Style/EmptyLinesAroundClassBody
 RSpec.describe JunkDrawer::Callable do
   after do
@@ -34,8 +35,7 @@ RSpec.describe JunkDrawer::Callable do
       class MyCallableClass
         include JunkDrawer::Callable
 
-        def bad_meth
-        end
+        def bad_meth; end
       end
     end.to raise_error(JunkDrawer::CallableError, /invalid method.*bad_meth/)
   end
@@ -47,8 +47,7 @@ RSpec.describe JunkDrawer::Callable do
 
       private
 
-        def good_meth
-        end
+        def good_meth; end
       end
     end.not_to raise_error
   end
@@ -77,8 +76,8 @@ RSpec.describe JunkDrawer::Callable do
       end
 
       expected = ['a : b', 'c : d']
-      expect([%w(a b), %w(c d)].map(&MyCallableClass.new)).to eq expected
-      expect([%w(a b), %w(c d)].map(&MyCallableClass)).to eq expected
+      expect([%w[a b], %w[c d]].map(&MyCallableClass.new)).to eq expected
+      expect([%w[a b], %w[c d]].map(&MyCallableClass)).to eq expected
     end
 
     it 'copes gracefully with RSpec any_instance matchers' do

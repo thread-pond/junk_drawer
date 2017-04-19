@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require_relative 'lib/junk_drawer/version'
 
 Gem::Specification.new do |spec|

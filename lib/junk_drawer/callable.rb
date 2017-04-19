@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module JunkDrawer
   # error to be thrown by Callable
   class CallableError < StandardError
