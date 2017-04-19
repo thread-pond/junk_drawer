@@ -4,8 +4,9 @@ RSpec.describe JunkDrawer::Notifier::HoneybadgerStrategy, '#call' do
   let(:strategy) { described_class.new }
 
   class FakeHoneybadger
-    def notify(error, options)
-    end
+
+    def notify(error, options); end
+
   end
 
   before { stub_const('Honeybadger', FakeHoneybadger) }

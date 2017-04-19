@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 module JunkDrawer
-
   module Matchers
-
     class Invoke
 
       include RSpec::Matchers::Composable
@@ -22,7 +22,7 @@ module JunkDrawer
         raise "missing '.on'" unless defined?(@expected_recipient)
         allow(@expected_recipient).to receive(@expected_method)
         allow(@expected_recipient).to receive_expected
-        event_proc.call
+        event_proc.()
         received_matcher.matches?(@expected_recipient)
       end
 
@@ -84,9 +84,7 @@ module JunkDrawer
       end
 
     end
-
   end
-
 end
 
 def invoke(expected_method)
