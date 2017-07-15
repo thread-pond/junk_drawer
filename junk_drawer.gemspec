@@ -21,14 +21,18 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.1'
 
+  spec.add_development_dependency 'activerecord', '~> 4.2'
+  spec.add_development_dependency 'activesupport', '~> 4.2'
   spec.add_development_dependency 'bundler', '~> 1.13'
   spec.add_development_dependency 'guard', '~> 2.14'
   spec.add_development_dependency 'guard-rspec', '~> 4.7'
   spec.add_development_dependency 'guard-rubocop', '~> 1.2'
+  spec.add_development_dependency 'pg', '~> 0.20'
   spec.add_development_dependency 'pry', '~> 0.10'
   spec.add_development_dependency 'rake', '~> 12.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.48.1'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.15.0'
   spec.add_development_dependency 'simplecov', '~> 0.14'
+  spec.add_development_dependency 'with_model', '~> 2.0'
 end

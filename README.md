@@ -1,7 +1,7 @@
 # JunkDrawer
 
-`JunkDrawer` is a gem providing exactly one (and someday more) random utility
-that is commonly useful across projects.
+`JunkDrawer` is a gem providing a handful of random utility that are commonly
+useful across projects.
 
 ## Installation
 
@@ -18,6 +18,18 @@ And then execute:
 Or install it yourself as:
 
     $ gem install junk_drawer
+
+If you want to include the Rails utilities, in your Gemfile you can instead use:
+
+```ruby
+gem 'junk_drawer', require: 'junk_drawer/rails'
+```
+
+### Contents
+
+- [JunkDrawer::Callable](#junkdrawercallable)
+- [JunkDrawer::Notifier](#junkdrawernotifier)
+- [JunkDrawer::BulkUpdatable](#junkdrawerbulkupdatable)
 
 ## Usage
 
@@ -133,6 +145,68 @@ config.after_initialize do
   JunkDrawer::Notifier.strategy = :honeybadger
 end
 ```
+
+-------------------------------------------------------------------------------
+
+## Rails
+
+For Rails specific tools, instead of requiring `'junk_drawer'`, you can require
+`'junk_drawer/rails'`. This will pull in both the plain Ruby and the Rails
+specific utilities.
+
+### JunkDrawer::BulkUpdatable
+
+`JunkDrawer::BulkUpdatable` is a utility to enable bulk updating of
+`ActiveRecord` models.  To enable it, extend in your models:
+
+```ruby
+class MyModel < ApplicationRecord
+  extend JunkDrawer::BulkUpdatable
+end
+```
+
+If you want to enable it for all models, you can also add it to your
+`ApplicationModel` class:
+
+```ruby
+class ApplicationRecord
+  self.abstract_class = true
+  extend JunkDrawer::BulkUpdatable
+end
+```
+
+To make use of it, you can pass an array of records into the `.bulk_update`
+class method on your model:
+
+```ruby
+my_model_1 = MyModel.find(1)
+my_model_1.name = 'Jabba'
+my_model_2 = MyModel.find(2)
+my_model_2.name = 'JarJar'
+
+MyModel.bulk_update([my_model_1, my_model_2])
+```
+
+This will generate a single SQL query to update both of the records in the
+database.
+
+#### Caveats
+
+- Right now this only supports PostgreSQL. PR's welcome!
+- It also only supports basic data types (including `hstore` and `jsonb`) for
+  your columns, so if you've got something weird you may have a bad time. Also
+  PR's welcome!
+- General advice: if you're updating many thousands of records at the same
+  time, you may still run into some performance bottlenecks. When you're
+  dealing with massive amounts of data, we suggest pairing
+  `JunkDrawer::BulkUpdatable` with Rails' built-in `find_in_batches`:
+
+  ```ruby
+  MyModel.find_in_batches(batch_size: 250) do |batch|
+    batch.each { |my_model| my_model.name = 'Jar' * rand(100) }
+    MyModel.bulk_update(batch)
+  end
+  ```
 
 ## Development
 

@@ -5,6 +5,18 @@ AllCops:
   TargetRubyVersion: 2.3
   DisplayCopNames: true
 
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - spec/**/*_spec.rb
+
+Metrics/AbcSize:
+  Exclude:
+    - lib/junk_drawer/rails/bulk_updatable.rb
+
+Metrics/MethodLength:
+  Exclude:
+    - lib/junk_drawer/rails/bulk_updatable.rb
+
 Metrics/BlockLength:
   Exclude:
     - junk_drawer.gemspec
@@ -61,6 +73,8 @@ Style/Send:
 
 RSpec/FilePath:
   IgnoreMethods: true
+  Exclude:
+    - spec/junk_drawer/rails/bulk_updatable_spec.rb
 
 RSpec/VerifiedDoubles:
   Enabled: true
