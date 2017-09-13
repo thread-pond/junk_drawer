@@ -211,7 +211,8 @@ database.
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
-`rake spec` to run the tests. You can also run `bin/console` for an interactive
+`rake spec` to run the tests, or `bin/test` to run tests for all supported
+ActiveRecord versions. You can also run `bin/console` for an interactive
 prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To
@@ -222,7 +223,7 @@ git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygem
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at
-https://github.com/mockdeep/junk_drawer. This project is intended to be a
+https://github.com/thread-pond/junk_drawer. This project is intended to be a
 safe, welcoming space for collaboration, and contributors are expected to
 adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 

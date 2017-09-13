@@ -1,7 +1,7 @@
 sudo: false
 language: ruby
 rvm:
-  - 2.3.1
+  - 2.3.3
 addons:
   postgresql: '9.4'
 before_install: gem install bundler -v 1.13.6
@@ -11,3 +11,7 @@ script:
   - bundle exec rubocop
   - bundle exec rake
   - bundle exec rake build
+gemfile:
+  - Gemfile
+  - gemfiles/rails_5.0.gems
+  - gemfiles/rails_4.2.gems

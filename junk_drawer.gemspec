@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['lobatifricha@gmail.com']
 
   spec.summary       = 'random useful Ruby utilities'
-  spec.homepage      = 'https://github.com/mockdeep/junk_drawer'
+  spec.homepage      = 'https://github.com/thread-pond/junk_drawer'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
@@ -21,8 +21,6 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.1'
 
-  spec.add_development_dependency 'activerecord', '~> 4.2'
-  spec.add_development_dependency 'activesupport', '~> 4.2'
   spec.add_development_dependency 'bundler', '~> 1.13'
   spec.add_development_dependency 'guard', '~> 2.14'
   spec.add_development_dependency 'guard-rspec', '~> 4.7'
