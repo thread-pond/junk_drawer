@@ -3,6 +3,9 @@ set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
+createuser -s -r postgres
+createdb junk_drawer_test -U postgres
+
 bundle install
 
 # Do any other automated setup that you need to do here
