@@ -20,6 +20,19 @@ RSpec.describe JunkDrawer::Callable do
     expect(MyCallableClass.('what', who: 'cares')).to eq expected
   end
 
+  it 'passes through a block to the instance method' do
+    class MyCallableClass
+      include JunkDrawer::Callable
+      def call
+        yield 'foo block content'
+      end
+    end
+
+    actual = nil
+    MyCallableClass.() { |result| actual = result }
+    expect(actual).to eq 'foo block content'
+  end
+
   it 'throws an error when call method is not defined' do
     class MyCallableClass
       include JunkDrawer::Callable
