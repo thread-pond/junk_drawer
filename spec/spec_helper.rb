@@ -13,6 +13,7 @@ ActiveRecord::Base.establish_connection(
   database: 'junk_drawer_test',
   host: 'localhost',
 )
+ActiveRecord::Base.connection.execute('CREATE EXTENSION IF NOT EXISTS hstore;')
 
 RSpec.configure do |config|
   config.order = :random
