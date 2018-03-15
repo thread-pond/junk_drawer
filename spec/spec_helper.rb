@@ -3,7 +3,7 @@
 require 'with_model'
 
 require_relative '../lib/junk_drawer/rails'
-require_relative 'support/invoke_matcher'
+Dir['./spec/support/**/*.rb'].each { |file_path| require file_path }
 
 Time.zone = 'Eastern Time (US & Canada)'
 
