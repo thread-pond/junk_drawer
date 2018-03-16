@@ -2,11 +2,19 @@
 
 RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
   DATA_TYPES = %i[
-    string
     boolean
-    hstore
+    date
     datetime
+    decimal
+    float
+    hstore
+    integer
+    json
     jsonb
+    string
+    text
+    timestamp
+    uuid
   ].freeze
 
   with_model :BulkUpdatableModel do

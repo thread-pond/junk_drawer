@@ -8,15 +8,23 @@ module JunkDrawer
   # module to allow bulk updates for `ActiveRecord` models
   module BulkUpdatable
     ATTRIBUTE_TYPE_TO_POSTGRES_CAST = {
-      datetime: '::timestamp',
-      hstore: '::hstore',
       boolean: '::boolean',
+      date: '::date',
+      datetime: '::timestamp',
+      float: '::float',
+      hstore: '::hstore',
+      integer: '::int',
+      json: '::json',
       jsonb: '::jsonb',
+      decimal: '::decimal',
+      time: '::time',
+      uuid: '::uuid',
     }.freeze
 
     POSTGRES_VALUE_CASTERS = {
       hstore: ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Hstore.new,
       jsonb: ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb.new,
+      json: ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Json.new,
     }.freeze
 
     def bulk_update(objects)
