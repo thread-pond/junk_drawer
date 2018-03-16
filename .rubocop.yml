@@ -20,7 +20,7 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Exclude:
     - junk_drawer.gemspec
-    - spec/**/*_spec.rb
+    - spec/**/*
 
 RSpec/ExampleLength:
   Enabled: false
