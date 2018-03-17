@@ -22,6 +22,12 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
     uuid
   ].freeze
 
+  ARRAY_TYPES = %i[
+    integer
+    string
+    text
+  ].freeze
+
   ## Types we're missing:
 
   ### not supported by ActiveRecord
@@ -46,6 +52,10 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
     table do |t|
       DATA_TYPES.each do |data_type|
         t.public_send(data_type, "#{data_type}_value")
+      end
+
+      ARRAY_TYPES.each do |data_type|
+        t.public_send(data_type, "#{data_type}_array_value", array: true)
       end
 
       t.datetime :updated_at, null: false
@@ -113,5 +123,9 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
 
   DATA_TYPES.each do |type|
     it_behaves_like 'bulk updatable type', type
+  end
+
+  ARRAY_TYPES.each do |type|
+    it_behaves_like 'bulk updatable type', "#{type}_array".to_sym
   end
 end
