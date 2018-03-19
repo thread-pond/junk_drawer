@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
 GENERATORS = {
-  string: ->(index) { "wat_#{index}" },
   boolean: ->(index) { index.even? },
-  hstore: ->(index) { { "foo_#{index}" => "bar_#{index}" } },
+  date: ->(index) { Time.zone.now.to_date - index.days },
   datetime: ->(index) { Time.zone.now.in_time_zone('UTC').round - index.days },
+  decimal: ->(index) { index * 2.3 },
+  float: ->(index) { index * 2.3 },
+  hstore: ->(index) { { "foo_#{index}" => "bar_#{index}" } },
+  integer: ->(index) { index + 5 },
+  json: ->(index) { { "boo_#{index}" => "bazzle_#{index}" } },
   jsonb: ->(index) { { "bee_#{index}" => "bizzle_#{index}" } },
+  string: ->(index) { "wat_#{index}" },
+  text: ->(index) { "text_#{index}" },
+  timestamp: ->(index) { Time.zone.now.in_time_zone('UTC').round - index.days },
+  uuid: ->(index) { "616f5839-731e-404d-869b-d0489438632#{index}" },
 }.freeze
 
 RSpec.shared_examples 'bulk updatable type' do |type|
