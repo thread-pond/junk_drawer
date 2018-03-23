@@ -17,6 +17,8 @@ module JunkDrawer
       json: '::json',
       jsonb: '::jsonb',
       decimal: '::decimal',
+      string: '::text',
+      text: '::text',
       time: '::time',
       uuid: '::uuid',
     }.freeze
@@ -66,7 +68,7 @@ module JunkDrawer
     def sanitized_values(object, attributes)
       postgres_types = attributes.map do |attribute|
         attribute_type = columns_hash[attribute.to_s].type
-        "?#{ATTRIBUTE_TYPE_TO_POSTGRES_CAST[attribute_type]}"
+        "?#{ATTRIBUTE_TYPE_TO_POSTGRES_CAST.fetch(attribute_type)}"
       end
 
       postgres_values = attributes.map do |attribute|
