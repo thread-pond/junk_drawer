@@ -60,22 +60,16 @@ module JunkDrawer
     end
 
     def sanitized_values(object, attributes)
-      postgres_types = attributes.map do |attribute|
-        attribute_type = columns_hash[attribute.to_s].type
-        "?#{ATTRIBUTE_TYPE_TO_POSTGRES_CAST.fetch(attribute_type)}"
-      end
-
       postgres_values = attributes.map do |attribute|
         value = object[attribute]
         column = columns_hash[attribute.to_s]
         caster = type_for_attribute(column.name)
+        type_cast = ATTRIBUTE_TYPE_TO_POSTGRES_CAST.fetch(column.type)
 
-        serialized_value(caster, value)
+        "#{connection.quote(serialized_value(caster, value))}#{type_cast}"
       end
 
-      sanitize_sql_array(
-        ["(?, #{postgres_types.join(', ')})", object.id, *postgres_values],
-      )
+      "(#{[object.id, *postgres_values].join(', ')})"
     end
 
     def serialized_value(caster, value)
