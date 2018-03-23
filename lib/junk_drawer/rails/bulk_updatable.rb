@@ -23,12 +23,6 @@ module JunkDrawer
       uuid: '::uuid',
     }.freeze
 
-    POSTGRES_VALUE_CASTERS = {
-      hstore: ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Hstore.new,
-      jsonb: ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Jsonb.new,
-      json: ActiveRecord::ConnectionAdapters::PostgreSQL::OID::Json.new,
-    }.freeze
-
     def bulk_update(objects)
       objects = objects.select(&:changed?)
       return unless objects.any?
@@ -73,10 +67,10 @@ module JunkDrawer
 
       postgres_values = attributes.map do |attribute|
         value = object[attribute]
-        attribute_type = columns_hash[attribute.to_s].type
-        caster = POSTGRES_VALUE_CASTERS[attribute_type]
+        column = columns_hash[attribute.to_s]
+        caster = type_for_attribute(column.name)
 
-        caster ? serialized_value(caster, value) : value
+        serialized_value(caster, value)
       end
 
       sanitize_sql_array(
