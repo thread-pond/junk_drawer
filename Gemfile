@@ -6,3 +6,4 @@ gemspec
 
 gem 'activerecord', '~> 5.1.0'
 gem 'activesupport', '~> 5.1.0'
+gem 'hstore_accessor', '~> 1.1.1'

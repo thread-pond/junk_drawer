@@ -19,6 +19,7 @@ GENERATORS = {
   json: ->(index) { { "boo_#{index}" => "bazzle_#{index}" } },
   jsonb: ->(index) { { "bee_#{index}" => "bizzle_#{index}" } },
   macaddr: ->(index) { "08:00:2b:01:02:0#{index}" },
+  nested_hstore: ->(index) { "hstore_#{index}" },
   string: ->(index) { "wat_#{index}" },
   string_array: ->(index) { Array.new(index) { |i| "string_#{i}" } },
   text: ->(index) { "text_#{index}" },
@@ -29,18 +30,19 @@ GENERATORS = {
 }.freeze
 
 RSpec.shared_examples 'bulk updatable type' do |type|
-  let(:getter_name) { "#{type}_value" }
-  let(:setter_name) { "#{type}_value=" }
+  let(:getter_name) { "#{type}_value".to_sym }
+  let(:setter_name) { "#{type}_value=".to_sym }
   let(:type) { type }
 
   def model_values(models)
-    BulkUpdatableModel.where(id: models.map(&:id)).pluck(getter_name)
+    BulkUpdatableModel.where(id: models.map(&:id)).map(&getter_name)
   end
 
   def generate_values(models, seed: 1)
     models.each_with_index.map do |model, index|
       value = GENERATORS.fetch(type).(index * seed)
       model.public_send(setter_name, value)
+      value
     end
   end
 
