@@ -7,22 +7,6 @@ require 'active_record/connection_adapters/postgresql_adapter'
 module JunkDrawer
   # module to allow bulk updates for `ActiveRecord` models
   module BulkUpdatable
-    ATTRIBUTE_TYPE_TO_POSTGRES_CAST = {
-      boolean: '::boolean',
-      date: '::date',
-      datetime: '::timestamp',
-      float: '::float',
-      hstore: '::hstore',
-      integer: '::int',
-      json: '::json',
-      jsonb: '::jsonb',
-      decimal: '::decimal',
-      string: '::text',
-      text: '::text',
-      time: '::time',
-      uuid: '::uuid',
-    }.freeze
-
     def bulk_update(objects)
       objects = objects.select(&:changed?)
       return unless objects.any?
@@ -62,9 +46,13 @@ module JunkDrawer
     def sanitized_values(object, attributes)
       postgres_values = attributes.map do |attribute|
         value = object[attribute]
+
+        # AR internal `columns_hash`
         column = columns_hash[attribute.to_s]
+
+        # AR internal `type_for_attribute`
         type = type_for_attribute(column.name)
-        type_cast = ATTRIBUTE_TYPE_TO_POSTGRES_CAST.fetch(column.type)
+        type_cast = "::#{column.sql_type}"
 
         "#{connection.quote(serialized_value(type, value))}#{type_cast}"
       end

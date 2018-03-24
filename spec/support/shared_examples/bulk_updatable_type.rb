@@ -1,18 +1,27 @@
 # frozen_string_literal: true
 
+def now
+  Time.zone.now.in_time_zone('UTC').round
+end
+
 GENERATORS = {
+  bigint: ->(index) { index + 10 },
+  bit: ->(index) { (index % 2).to_s },
   boolean: ->(index) { index.even? },
-  date: ->(index) { Time.zone.now.to_date - index.days },
-  datetime: ->(index) { Time.zone.now.in_time_zone('UTC').round - index.days },
+  date: ->(index) { now.to_date - index.days },
+  datetime: ->(index) { now - index.days },
   decimal: ->(index) { index * 2.3 },
   float: ->(index) { index * 2.3 },
   hstore: ->(index) { { "foo_#{index}" => "bar_#{index}" } },
+  inet: ->(index) { IPAddr.new("192.168.0.#{index}") },
   integer: ->(index) { index + 5 },
   json: ->(index) { { "boo_#{index}" => "bazzle_#{index}" } },
   jsonb: ->(index) { { "bee_#{index}" => "bizzle_#{index}" } },
+  macaddr: ->(index) { "08:00:2b:01:02:0#{index}" },
   string: ->(index) { "wat_#{index}" },
   text: ->(index) { "text_#{index}" },
-  timestamp: ->(index) { Time.zone.now.in_time_zone('UTC').round - index.days },
+  time: ->(index) { (now - index.hours).change(year: 2000, month: 1, day: 1) },
+  timestamp: ->(index) { now - index.days },
   uuid: ->(index) { "616f5839-731e-404d-869b-d0489438632#{index}" },
 }.freeze
 
