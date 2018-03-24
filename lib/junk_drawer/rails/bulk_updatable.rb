@@ -22,7 +22,13 @@ module JunkDrawer
       now = Time.zone.now
       objects.each { |object| object.updated_at = now }
 
-      objects.flat_map(&:changed).uniq
+      changed_attributes = objects.flat_map(&:changed).uniq
+      if ::ActiveRecord::VERSION::MAJOR >= 5
+        column_names & changed_attributes
+      else
+        # to remove virtual columns from jsonb_accessor 0.3.3
+        columns.select(&:sql_type).map(&:name) & changed_attributes
+      end
     end
 
     def build_query_for(objects, attributes)

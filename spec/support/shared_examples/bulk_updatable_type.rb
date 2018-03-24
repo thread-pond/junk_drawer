@@ -20,6 +20,8 @@ GENERATORS = {
   jsonb: ->(index) { { "bee_#{index}" => "bizzle_#{index}" } },
   macaddr: ->(index) { "08:00:2b:01:02:0#{index}" },
   nested_hstore: ->(index) { "hstore_#{index}" },
+  nested_jsonb: ->(index) { 5 * index },
+  nested_jsonb_array: ->(index) { Array.new(index, &:itself) },
   string: ->(index) { "wat_#{index}" },
   string_array: ->(index) { Array.new(index) { |i| "string_#{i}" } },
   text: ->(index) { "text_#{index}" },
