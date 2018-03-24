@@ -51,7 +51,7 @@ module JunkDrawer
         "#{quoted_column_name} = tmp_table.#{quoted_column_name}"
       end.join(', ')
 
-      <<-SQL
+      <<-SQL.squish
         UPDATE #{table_name}
         SET #{assignment_query}
         FROM (VALUES #{object_values}) AS tmp_table(id, #{attributes.join(', ')})
