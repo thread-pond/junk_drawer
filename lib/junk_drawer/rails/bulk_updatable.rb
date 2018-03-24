@@ -63,20 +63,20 @@ module JunkDrawer
       postgres_values = attributes.map do |attribute|
         value = object[attribute]
         column = columns_hash[attribute.to_s]
-        caster = type_for_attribute(column.name)
+        type = type_for_attribute(column.name)
         type_cast = ATTRIBUTE_TYPE_TO_POSTGRES_CAST.fetch(column.type)
 
-        "#{connection.quote(serialized_value(caster, value))}#{type_cast}"
+        "#{connection.quote(serialized_value(type, value))}#{type_cast}"
       end
 
       "(#{[object.id, *postgres_values].join(', ')})"
     end
 
-    def serialized_value(caster, value)
+    def serialized_value(type, value)
       if ::ActiveRecord::VERSION::MAJOR >= 5
-        caster.serialize(value)
+        type.serialize(value)
       else
-        caster.type_cast_for_database(value)
+        type.type_cast_for_database(value)
       end
     end
   end
