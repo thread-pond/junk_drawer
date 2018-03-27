@@ -53,6 +53,7 @@ module JunkDrawer
         # AR internal `type_for_attribute`
         type = type_for_attribute(column.name)
         type_cast = "::#{column.sql_type}"
+        type_cast = "#{type_cast}[]" if column.array
 
         "#{connection.quote(serialized_value(type, value))}#{type_cast}"
       end
