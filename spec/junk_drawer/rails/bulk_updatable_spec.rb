@@ -2,20 +2,45 @@
 
 RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
   DATA_TYPES = %i[
+    bigint
+    bit
     boolean
     date
     datetime
     decimal
     float
     hstore
+    inet
     integer
     json
     jsonb
+    macaddr
     string
     text
+    time
     timestamp
     uuid
   ].freeze
+
+  ## Types we're missing:
+
+  ### not supported by ActiveRecord
+  # char
+  # real
+  # smallint
+  # timestampz
+  # varchar
+
+  ### probably not important
+  # box
+  # interval
+  # line
+  # lseg
+  # money
+  # path
+  # point
+  # polygon
+  # range
 
   with_model :BulkUpdatableModel do
     table do |t|
