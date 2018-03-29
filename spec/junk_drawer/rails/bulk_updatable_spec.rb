@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'hstore_accessor'
+require 'jsonb_accessor'
 
 RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
   DATA_TYPES = %i[
@@ -61,6 +62,7 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
       end
 
       t.hstore :hstore_accessor_value
+      t.jsonb :jsonb_accessor_value
       t.datetime :updated_at, null: false
     end
 
@@ -68,6 +70,27 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
       extend JunkDrawer::BulkUpdatable
 
       hstore_accessor :hstore_accessor_value, nested_hstore_value: :string
+
+      integer_array =
+        if ::ActiveRecord::VERSION::MAJOR >= 5
+          [:integer, array: true]
+        else
+          :integer_array
+        end
+
+      jsonb_accessor(
+        :jsonb_accessor_value,
+        nested_jsonb_value: :integer,
+        nested_jsonb_array_value: integer_array,
+      )
+    end
+  end
+
+  after do
+    if ::ActiveRecord::VERSION::MAJOR < 5
+      # jsonb_accessor 0.3.3 gets a lot of warnings about already initialized
+      # constant, so remove test constant after each
+      JsonbAccessor.__send__(:remove_const, 'JABulkUpdatableModel')
     end
   end
 
@@ -135,4 +158,6 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
   end
 
   it_behaves_like 'bulk updatable type', :nested_hstore
+  it_behaves_like 'bulk updatable type', :nested_jsonb
+  it_behaves_like 'bulk updatable type', :nested_jsonb_array
 end
