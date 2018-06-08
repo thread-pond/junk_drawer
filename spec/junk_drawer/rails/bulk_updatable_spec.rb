@@ -160,4 +160,17 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
   it_behaves_like 'bulk updatable type', :nested_hstore
   it_behaves_like 'bulk updatable type', :nested_jsonb
   it_behaves_like 'bulk updatable type', :nested_jsonb_array
+
+  it 'clears change information on records after save' do
+    models.first.boolean_value = true
+    models.first.string_value = 'weeehooo'
+    models.last.boolean_value = false
+    models.last.string_value = 'plop'
+
+    expect(models.all?(&:changed?)).to be true
+
+    BulkUpdatableModel.bulk_update(models)
+
+    expect(models.any?(&:changed?)).to be false
+  end
 end

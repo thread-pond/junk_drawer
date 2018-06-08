@@ -14,6 +14,7 @@ module JunkDrawer
       changed_attributes = extract_changed_attributes(objects)
       query = build_query_for(objects, changed_attributes)
       connection.execute(query)
+      objects.each(&:clear_changes_information)
     end
 
   private
