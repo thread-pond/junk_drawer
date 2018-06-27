@@ -11,13 +11,29 @@ module JunkDrawer
       objects = objects.select(&:changed?)
       return unless objects.any?
 
-      changed_attributes = extract_changed_attributes(objects)
-      query = build_query_for(objects, changed_attributes)
+      unique_objects = uniquify_and_merge(objects)
+      changed_attributes = extract_changed_attributes(unique_objects)
+      query = build_query_for(unique_objects, changed_attributes)
       connection.execute(query)
       objects.each(&:clear_changes_information)
     end
 
   private
+
+    def uniquify_and_merge(objects)
+      grouped_objects = objects.group_by(&:id).values
+      grouped_objects.each do |group|
+        next if group.length == 1
+
+        attrs = group.each_with_object({}) do |object, changes|
+          object.changed.each do |changed_attribute|
+            changes[changed_attribute] = object[changed_attribute]
+          end
+        end
+        group.each { |object| object.attributes = attrs }
+      end
+      grouped_objects.map(&:first)
+    end
 
     def extract_changed_attributes(objects)
       now = Time.zone.now
