@@ -173,4 +173,53 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
 
     expect(models.any?(&:changed?)).to be false
   end
+
+  context 'when there are multiple references to the same object' do
+    let(:model) { models.first }
+    let(:model_copy_1) { BulkUpdatableModel.find(model.id) }
+    let(:model_copy_2) { BulkUpdatableModel.find(model.id) }
+
+    before do
+      model.integer_value = 42
+      model_copy_1.string_value = 'foo'
+      model_copy_2.boolean_value = true
+    end
+
+    it 'merges changes across multiple model references' do
+      expect do
+        BulkUpdatableModel.bulk_update([model, model_copy_1, model_copy_2])
+      end.to change { BulkUpdatableModel.find(model.id).integer_value }.to(42)
+        .and change { BulkUpdatableModel.find(model.id).string_value }.to('foo')
+        .and change { BulkUpdatableModel.find(model.id).boolean_value }.to(true)
+    end
+
+    it 'clears change information on all records after save' do
+      expect do
+        BulkUpdatableModel.bulk_update([model, model_copy_1, model_copy_2])
+      end.to change(model, :changed?).from(true).to(false)
+        .and change(model_copy_1, :changed?).from(true).to(false)
+        .and change(model_copy_2, :changed?).from(true).to(false)
+    end
+
+    it 'sets updated attributes on all instances' do
+      expect do
+        BulkUpdatableModel.bulk_update([model, model_copy_1, model_copy_2])
+      end.to change(model_copy_1, :integer_value).from(nil).to(42)
+        .and change(model_copy_2, :integer_value).from(nil).to(42)
+        .and change(model, :string_value).from(nil).to('foo')
+        .and change(model_copy_2, :string_value).from(nil).to('foo')
+        .and change(model, :boolean_value).from(nil).to(true)
+        .and change(model_copy_1, :boolean_value).from(nil).to(true)
+    end
+
+    it 'keeps the last value when the same property shows up more than once' do
+      model_copy_1.integer_value = 5
+      model_copy_2.integer_value = 17
+
+      expect do
+        BulkUpdatableModel.bulk_update([model, model_copy_1, model_copy_2])
+      end.to change(model, :integer_value).from(42).to(17)
+        .and change(model_copy_1, :integer_value).from(5).to(17)
+    end
+  end
 end
