@@ -117,6 +117,17 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
       .and not_change { models.last.updated_at }
   end
 
+  it 'properly updates when strings have multiple spaces' do
+    models.first.string_value = 'something  with  two  spaces'
+    models.second.string_value = "newline \n thing"
+
+    BulkUpdatableModel.bulk_update(models)
+    models.each(&:reload)
+
+    expect(models[0].string_value).to eq 'something  with  two  spaces'
+    expect(models[1].string_value).to eq "newline \n thing"
+  end
+
   it 'updates the updated_at on the models' do
     expect do
       models.each_with_index do |model, index|

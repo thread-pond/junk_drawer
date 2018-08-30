@@ -58,12 +58,11 @@ module JunkDrawer
         "#{quoted_column_name} = tmp_table.#{quoted_column_name}"
       end.join(', ')
 
-      <<-SQL.squish
-        UPDATE #{table_name}
-        SET #{assignment_query}
-        FROM (VALUES #{object_values}) AS tmp_table(id, #{attributes.join(', ')})
-        WHERE #{table_name}.id = tmp_table.id
-      SQL
+      "UPDATE #{table_name} " \
+      "SET #{assignment_query} " \
+      "FROM (VALUES #{object_values}) " \
+      "AS tmp_table(id, #{attributes.join(', ')}) " \
+      "WHERE #{table_name}.id = tmp_table.id"
     end
 
     def sanitized_values(object, attributes)
