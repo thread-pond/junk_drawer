@@ -69,6 +69,8 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
     model do
       extend JunkDrawer::BulkUpdatable
 
+      after_commit :increment_commit_count
+
       hstore_accessor :hstore_accessor_value, nested_hstore_value: :string
 
       integer_array =
@@ -83,6 +85,20 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
         nested_jsonb_value: :integer,
         nested_jsonb_array_value: integer_array,
       )
+
+      class << self
+
+        attr_accessor :commit_count
+
+        def commit_count
+          @commit_count ||= 0
+        end
+
+      end
+
+      def increment_commit_count
+        self.class.commit_count += 1
+      end
     end
   end
 
@@ -95,6 +111,12 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
   end
 
   let(:models) { [BulkUpdatableModel.create!, BulkUpdatableModel.create!] }
+
+  it 'calls after commit hooks' do
+    expect do
+      BulkUpdatableModel.bulk_update(models)
+    end.to change(BulkUpdatableModel, :commit_count).from(0).to(2)
+  end
 
   it 'updates the attribute on all the models' do
     models.each_with_index do |model, index|
