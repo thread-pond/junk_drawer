@@ -17,7 +17,7 @@ RSpec.describe JunkDrawer::Notifier::HoneybadgerStrategy, '#call' do
 
     expected_args = [JunkDrawer::NotifierError.new(message), context: context]
     expect do
-      strategy.(message, context)
+      strategy.(message, **context)
     end.to invoke(:notify).on(Honeybadger).with(*expected_args)
   end
 
@@ -27,7 +27,7 @@ RSpec.describe JunkDrawer::Notifier::HoneybadgerStrategy, '#call' do
     context = { goober: 'gutz' }
 
     expect do
-      strategy.(error, context)
+      strategy.(error, **context)
     end.to invoke(:notify).on(Honeybadger).with(error, context: context)
   end
 end

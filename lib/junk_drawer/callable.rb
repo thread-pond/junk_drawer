@@ -19,8 +19,8 @@ module JunkDrawer
     # an instance. It also causes an error to be raised if a public instance
     # method is defined with a name other than `call`
     module ClassMethods
-      def call(*args, &block)
-        new.(*args, &block)
+      def call(*args, **kwargs, &block)
+        new.(*args, **kwargs, &block)
       end
 
       def to_proc
