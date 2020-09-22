@@ -20,6 +20,18 @@ RSpec.describe JunkDrawer::Callable do
     expect(MyCallableClass.('what', who: 'cares')).to eq expected
   end
 
+  it 'handles default arguments' do
+    class MyCallableClass
+      include JunkDrawer::Callable
+      def call(one_arg = 'foo')
+        "calling in, #{one_arg}"
+      end
+    end
+
+    expected = 'calling in, foo'
+    expect(MyCallableClass.()).to eq expected
+  end
+
   it 'passes through a block to the instance method' do
     class MyCallableClass
       include JunkDrawer::Callable
