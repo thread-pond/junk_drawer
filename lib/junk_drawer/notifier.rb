@@ -12,7 +12,12 @@ module JunkDrawer
 
     class << self
 
-      attr_accessor :strategy
+      attr_reader :strategy
+
+      def strategy=(strategy)
+        @strategy =
+          strategy.is_a?(Symbol) ? STRATEGIES.fetch(strategy) : strategy
+      end
 
     end
 
@@ -23,13 +28,7 @@ module JunkDrawer
     }.freeze
 
     def call(*args)
-      strategy.(*args)
-    end
-
-  private
-
-    def strategy
-      STRATEGIES.fetch(self.class.strategy)
+      self.class.strategy.(*args)
     end
 
   end
