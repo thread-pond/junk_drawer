@@ -27,9 +27,18 @@ gem 'junk_drawer', require: 'junk_drawer/rails'
 
 ### Contents
 
-- [JunkDrawer::Callable](#junkdrawercallable)
-- [JunkDrawer::Notifier](#junkdrawernotifier)
-- [JunkDrawer::BulkUpdatable](#junkdrawerbulkupdatable)
+- [JunkDrawer](#junkdrawer)
+  - [Installation](#installation)
+    - [Contents](#contents)
+  - [Usage](#usage)
+    - [JunkDrawer::Callable](#junkdrawercallable)
+    - [JunkDrawer::Notifier](#junkdrawernotifier)
+  - [Rails](#rails)
+    - [JunkDrawer::BulkUpdatable](#junkdrawerbulkupdatable)
+      - [Caveats](#caveats)
+  - [Development](#development)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Usage
 
@@ -128,6 +137,28 @@ your selected strategy. The strategies available are as follows:
 
 3) `:null` is a noop. If you want to disable notifications temporarily, you can
   configure the strategy to `:null`.
+
+4) To create your own custom notifier, configure `JunkDrawer::Notifier` with
+  a callable object as the strategy.
+
+```ruby
+class MyNotifier
+  include JunkDrawer::Callable
+
+  def call(*args)
+    SomeMonitoringService.notify(*args)
+  end
+end
+
+JunkDrawer::Notifier.strategy = MyNotifier
+```
+
+```ruby
+JunkDrawer::Notifier.strategy = ->(*args) {
+  MonitoringServiceA.notify(*args)
+  MonitoringServiceB.notify(*args)
+}
+```
 
 If you're using Rails, you may want to configure `Notifier` based on the
 environment, so in your `config/environments/development.rb` you might have:
