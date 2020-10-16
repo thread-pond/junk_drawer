@@ -26,7 +26,7 @@ jobs:
     - name: Setup PostgreSQL
       uses: Harmon758/postgresql-action@v1.0.0
       with:
-        postgresql version: '9.4'
+        postgresql version: '11'
         postgresql db: junk_drawer_test
         postgresql user: postgres
 
