@@ -9,6 +9,7 @@ Time.zone = 'Eastern Time (US & Canada)'
 
 ActiveRecord::Base.establish_connection(
   username: 'postgres',
+  password: 'postgres',
   adapter: 'postgresql',
   database: 'junk_drawer_test',
   host: 'localhost',
