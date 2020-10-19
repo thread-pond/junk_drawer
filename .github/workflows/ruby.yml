@@ -35,6 +35,9 @@ jobs:
         ruby-version: ${{ matrix.ruby }}
         bundler: 2.0.2
 
+    - name: Check postgres install
+      run: pgrep postgres
+
     - name: Install dependencies
       run: bundle install
 
