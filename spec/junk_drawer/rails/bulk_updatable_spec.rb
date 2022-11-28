@@ -185,6 +185,14 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
     expect(models.any?(&:changed?)).to be false
   end
 
+  it 'stores previous change information on records' do
+    models.first.boolean_value = true
+
+    expect { BulkUpdatableModel.bulk_update(models) }
+      .to change { models.first.previous_changes['boolean_value'] }
+      .from(nil).to([nil, true])
+  end
+
   context 'when there are multiple references to the same object' do
     let(:model) { models.first }
     let(:model_copy_1) { BulkUpdatableModel.find(model.id) }
