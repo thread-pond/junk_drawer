@@ -219,7 +219,8 @@ MyModel.bulk_update([my_model_1, my_model_2])
 ```
 
 This will generate a single SQL query to update both of the records in the
-database.
+database. If `prepared_statements` is set to true, `BulkUpdatable` will generate
+queries that use bind parameters.
 
 #### Caveats
 
@@ -255,7 +256,7 @@ In order to run tests against different Rails versions, you can use
 `BUNDLE_GEMFILE`:
 
 ```sh
-$ BUNDLE_GEMFILE=gemfiles/rails_5.0.gems rake spec
+$ BUNDLE_GEMFILE=gemfiles/rails_7.0.gems rake spec
 ```
 
 ## Contributing

@@ -3,6 +3,7 @@
 require 'active_support/all'
 require 'active_record'
 require 'active_record/connection_adapters/postgresql_adapter'
+require 'active_record/relation/query_attribute'
 
 module JunkDrawer
   # module to allow bulk updates for `ActiveRecord` models
@@ -11,14 +12,34 @@ module JunkDrawer
       objects = objects.select(&:changed?)
       return unless objects.any?
 
-      unique_objects = uniquify_and_merge(objects)
-      changed_attributes = extract_changed_attributes(unique_objects)
-      query = build_query_for(unique_objects, changed_attributes)
-      connection.execute(query)
+      if connection.prepared_statements
+        build_and_exec_prepared_query(objects)
+      else
+        build_and_exec_unprepared_query(objects)
+      end
       objects.each(&:changes_applied)
     end
 
   private
+
+    def build_and_exec_prepared_query(objects)
+      unique_objects = uniquify_and_merge(objects)
+      changed_attributes = extract_changed_attributes(unique_objects)
+      changed_attributes.unshift('id')
+
+      unique_objects.each_slice(batch_size(changed_attributes)) do |batch|
+        query = build_prepared_query_for(batch, changed_attributes)
+        values = values_for_objects(batch, changed_attributes)
+        connection.exec_query(query, "#{name} Bulk Update", values, prepare: true)
+      end
+    end
+
+    def build_and_exec_unprepared_query(objects)
+      unique_objects = uniquify_and_merge(objects)
+      changed_attributes = extract_changed_attributes(unique_objects)
+      query = build_unprepared_query_for(unique_objects, changed_attributes)
+      connection.execute(query)
+    end
 
     def uniquify_and_merge(objects)
       grouped_objects = objects.group_by(&:id).values
@@ -40,19 +61,20 @@ module JunkDrawer
       objects.each { |object| object.updated_at = now }
 
       changed_attributes = objects.flat_map(&:changed).uniq
-      if ::ActiveRecord::VERSION::MAJOR >= 5
-        column_names & changed_attributes
-      else
-        # to remove virtual columns from jsonb_accessor 0.3.3
-        columns.select(&:sql_type).map(&:name) & changed_attributes
-      end
+      column_names & changed_attributes
     end
 
-    def build_query_for(objects, attributes)
-      object_values = objects.map do |object|
-        sanitized_values(object, attributes)
-      end.join(', ')
+    def build_unprepared_query_for(objects, attributes)
+      object_values = objects.map { |object| sanitized_values(object, attributes) }
+      build_query_for(attributes.unshift('id'), object_values.join(', '))
+    end
 
+    def build_prepared_query_for(objects, attributes)
+      object_placeholders = build_placeholders(objects, attributes)
+      build_query_for(attributes, object_placeholders)
+    end
+
+    def build_query_for(attributes, values)
       assignment_query = attributes.map do |attribute|
         quoted_column_name = connection.quote_column_name(attribute)
         "#{quoted_column_name} = tmp_table.#{quoted_column_name}"
@@ -60,9 +82,48 @@ module JunkDrawer
 
       "UPDATE #{table_name} " \
       "SET #{assignment_query} " \
-      "FROM (VALUES #{object_values}) " \
-      "AS tmp_table(id, #{attributes.join(', ')}) " \
+      "FROM (VALUES #{values}) " \
+      "AS tmp_table(#{attributes.join(', ')}) " \
       "WHERE #{table_name}.id = tmp_table.id"
+    end
+
+    def build_placeholders(objects, attributes)
+      index = 0
+      objects.map do
+        attribute_placeholders = attributes.map do |attribute|
+          index += 1
+          attribute_placeholder(attribute, index)
+        end.join(', ')
+
+        "(#{attribute_placeholders})"
+      end.join(', ')
+    end
+
+    def attribute_placeholder(attribute, index)
+      # AR internal `columns_hash`
+      column = columns_hash[attribute.to_s]
+
+      type_cast = "::#{column.sql_type}"
+      type_cast = "#{type_cast}[]" if column.array
+
+      "$#{index}#{type_cast}"
+    end
+
+    def values_for_objects(objects, attributes)
+      objects.flat_map { |object| values_for_object(object, attributes) }
+    end
+
+    def values_for_object(object, attributes)
+      attributes.map do |attribute|
+        value = object[attribute]
+
+        # AR internal `columns_hash`
+        column = columns_hash[attribute.to_s]
+
+        # AR internal `type_for_attribute`
+        type = type_for_attribute(column.name)
+        ActiveRecord::Relation::QueryAttribute.new(column.name, value, type)
+      end
     end
 
     def sanitized_values(object, attributes)
@@ -77,18 +138,15 @@ module JunkDrawer
         type_cast = "::#{column.sql_type}"
         type_cast = "#{type_cast}[]" if column.array
 
-        "#{connection.quote(serialized_value(type, value))}#{type_cast}"
+        "#{connection.quote(type.serialize(value))}#{type_cast}"
       end
 
       "(#{[object.id, *postgres_values].join(', ')})"
     end
 
-    def serialized_value(type, value)
-      if ::ActiveRecord::VERSION::MAJOR >= 5
-        type.serialize(value)
-      else
-        type.type_cast_for_database(value)
-      end
+    def batch_size(attribute_names)
+      max_bind_params = connection.__send__(:bind_params_length)
+      max_bind_params / attribute_names.length
     end
   end
 end
