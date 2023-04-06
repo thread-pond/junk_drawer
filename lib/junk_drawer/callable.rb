@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'ruby2_keywords'
-
 module JunkDrawer
   # error to be thrown by Callable
   class CallableError < StandardError
@@ -21,8 +19,8 @@ module JunkDrawer
     # an instance. It also causes an error to be raised if a public instance
     # method is defined with a name other than `call`
     module ClassMethods
-      ruby2_keywords def call(*args, &block)
-        new.(*args, &block)
+      def call(*args, **kwargs, &block)
+        new.(*args, **kwargs, &block)
       end
 
       def to_proc
