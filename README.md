@@ -255,7 +255,7 @@ In order to run tests against different Rails versions, you can use
 `BUNDLE_GEMFILE`:
 
 ```sh
-$ BUNDLE_GEMFILE=gemfiles/rails_4.2.gems rake spec
+$ BUNDLE_GEMFILE=gemfiles/rails_5.0.gems rake spec
 ```
 
 ## Contributing
