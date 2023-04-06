@@ -3,7 +3,3 @@
 source 'https://rubygems.org'
 
 gemspec
-
-gem 'activerecord', '~> 5.2.0'
-gem 'activesupport', '~> 5.2.0'
-gem 'jsonb_accessor', '~> 1.3.6'

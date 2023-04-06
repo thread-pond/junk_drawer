@@ -13,9 +13,9 @@ jobs:
       BUNDLE_GEMFILE: gemfiles/rails_${{ matrix.rails }}.gems
     strategy:
       matrix:
-        ruby: [2.6, 2.7]
-        postgres: [10, 11, 12, 13, 14]
-        rails: ['5.0']
+        ruby: ['3.0', '3.1']
+        postgres: [12, 13, 14]
+        rails: ['7.0']
     name: Ruby ${{ matrix.ruby }} x Postgres ${{ matrix.postgres }} x Rails ${{ matrix.rails }}
 
     services:
