@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-# rubocop:disable Style/EmptyLinesAroundClassBody
+# rubocop:disable Layout/EmptyLinesAroundClassBody
 RSpec.describe JunkDrawer::Callable do
   after do
-    if Object.const_defined?(:MyCallableClass)
-      Object.__send__(:remove_const, :MyCallableClass)
-    end
+    Object.__send__(:remove_const, :MyCallableClass) if Object.const_defined?(:MyCallableClass)
   end
 
   it 'adds a class method which delegates to an instance' do
@@ -115,11 +113,9 @@ RSpec.describe JunkDrawer::Callable do
       end
 
       expect do
-        # rubocop:disable RSpec/AnyInstance
         klass = MyCallableClass
         allow_any_instance_of(klass).to receive(:call).and_return('thanks')
         expect_any_instance_of(klass).to receive(:call).and_return('thanks')
-        # rubocop:enable RSpec/AnyInstance
       end.not_to raise_error
 
       expect(MyCallableClass.()).to eq 'thanks'
