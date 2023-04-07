@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'hstore_accessor'
 require 'jsonb_accessor'
 
 RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
@@ -61,15 +60,12 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
         t.public_send(data_type, "#{data_type}_array_value", array: true)
       end
 
-      t.hstore :hstore_accessor_value
       t.jsonb :jsonb_accessor_value
       t.datetime :updated_at, null: false
     end
 
     model do
       extend JunkDrawer::BulkUpdatable
-
-      hstore_accessor :hstore_accessor_value, nested_hstore_value: :string
 
       integer_array =
         if ::ActiveRecord::VERSION::MAJOR >= 5
@@ -168,7 +164,6 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
     it_behaves_like 'bulk updatable type', "#{type}_array".to_sym
   end
 
-  it_behaves_like 'bulk updatable type', :nested_hstore
   it_behaves_like 'bulk updatable type', :nested_jsonb
   it_behaves_like 'bulk updatable type', :nested_jsonb_array
 
