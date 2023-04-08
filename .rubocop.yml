@@ -1,9 +1,18 @@
+inherit_from: .rubocop_todo.yml
+
 require: rubocop-rspec
 
 AllCops:
   DefaultFormatter: fuubar
   TargetRubyVersion: 2.3
   DisplayCopNames: true
+  NewCops: enable
+
+Layout/AccessModifierIndentation:
+  EnforcedStyle: outdent
+
+Layout/EmptyLinesAroundClassBody:
+  EnforcedStyle: empty_lines
 
 Lint/AmbiguousBlockAssociation:
   Exclude:
@@ -13,27 +22,34 @@ Metrics/AbcSize:
   Exclude:
     - lib/junk_drawer/rails/bulk_updatable.rb
 
-Metrics/MethodLength:
-  Exclude:
-    - lib/junk_drawer/rails/bulk_updatable.rb
-
 Metrics/BlockLength:
   Exclude:
     - junk_drawer.gemspec
     - spec/**/*
 
+Metrics/MethodLength:
+  Exclude:
+    - lib/junk_drawer/rails/bulk_updatable.rb
+
+Naming/VariableNumber:
+  EnforcedStyle: snake_case
+
+RSpec/AnyInstance: { Enabled: false } # broken, re-enable after upgrade
+RSpec/DescribeClass: { Enabled: false } # broken, re-enable after upgrade
+
 RSpec/ExampleLength:
   Enabled: false
+
+RSpec/FilePath:
+  IgnoreMethods: true
+  Exclude:
+    - spec/junk_drawer/rails/bulk_updatable_spec.rb
 
 RSpec/MultipleExpectations:
   Enabled: false
 
-# default disabled rules
-Style/AutoResourceCleanup:
-  Enabled: true
-
+# non-conventional rules
 Style/CollectionMethods:
-  Enabled: true
   PreferredMethods:
     collect: 'map'
     collect!: 'map!'
@@ -41,62 +57,14 @@ Style/CollectionMethods:
     find: 'detect'
     find_all: 'select'
 
-Style/FirstArrayElementLineBreak:
-  Enabled: true
-
-Style/FirstHashElementLineBreak:
-  Enabled: true
-
-Style/FirstMethodArgumentLineBreak:
-  Enabled: true
-
-Style/FirstMethodParameterLineBreak:
-  Enabled: true
-
-Style/MultilineArrayBraceLayout:
-  Enabled: true
-
-Style/MultilineHashBraceLayout:
-  Enabled: true
-
-Style/MultilineMethodCallBraceLayout:
-  Enabled: true
-
-Style/MultilineMethodDefinitionBraceLayout:
-  Enabled: true
-
-Style/OptionHash:
-  Enabled: true
-
-Style/Send:
-  Enabled: true
-
-RSpec/FilePath:
-  IgnoreMethods: true
-  Exclude:
-    - spec/junk_drawer/rails/bulk_updatable_spec.rb
-
-RSpec/VerifiedDoubles:
-  Enabled: true
-
-# non-conventional rules
 Style/LambdaCall:
   EnforcedStyle: braces
 
-Style/EmptyLinesAroundClassBody:
-  EnforcedStyle: empty_lines
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
 
-Style/AccessModifierIndentation:
-  EnforcedStyle: outdent
-
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: comma
 
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: consistent_comma
-
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: consistent_comma
-
-Style/VariableNumber:
-  EnforcedStyle: snake_case
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma

@@ -20,6 +20,7 @@ module JunkDrawer
 
       def matches?(event_proc)
         raise "missing '.on'" unless defined?(@expected_recipient)
+
         allow(@expected_recipient).to receive(@expected_method)
         allow(@expected_recipient).to receive_expected
         event_proc.()
@@ -54,13 +55,9 @@ module JunkDrawer
 
       def receive_expected
         receive_expected = receive(@expected_method)
-        if defined?(@return_arguments)
-          receive_expected = receive_expected.and_return(*@return_arguments)
-        end
+        receive_expected = receive_expected.and_return(*@return_arguments) if defined?(@return_arguments)
 
-        if defined?(@and_call_original)
-          receive_expected = receive_expected.and_call_original
-        end
+        receive_expected = receive_expected.and_call_original if defined?(@and_call_original)
         receive_expected
       end
 
@@ -75,9 +72,7 @@ module JunkDrawer
       def received_matcher
         @received_matcher ||= begin
           matcher = RSpec::Mocks::Matchers::HaveReceived.new(@expected_method)
-          if defined?(@expected_arguments)
-            matcher = matcher.with(*@expected_arguments)
-          end
+          matcher = matcher.with(*@expected_arguments) if defined?(@expected_arguments)
 
           matcher
         end
