@@ -7,9 +7,10 @@ RSpec.describe JunkDrawer::Notifier, '#call' do
 
   it 'calls the configured pre-defined notifier with the given arguments' do
     JunkDrawer::Notifier.strategy = :raise
-    strategy = JunkDrawer::Notifier::RaiseStrategy
-    expect { notifier.('foo', 'bar', 'butts') }
-      .to invoke(:call).on(strategy).with('foo', 'bar', 'butts')
+    expected_message = 'my message, context: {:wat=>"butts"}'
+
+    expect { notifier.('my message', wat: 'butts') }
+      .to raise_error(JunkDrawer::NotifierError, expected_message)
   end
 
   it 'calls the configured callable notifier with the given arguments' do

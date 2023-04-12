@@ -27,8 +27,8 @@ module JunkDrawer
       null: NullStrategy,
     }.freeze
 
-    def call(*args)
-      self.class.strategy.(*args)
+    def call(*args, **kwargs)
+      self.class.strategy.(*args, **kwargs)
     end
 
   end
