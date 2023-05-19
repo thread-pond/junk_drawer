@@ -25,11 +25,11 @@ module JunkDrawer
     def build_and_exec_prepared_query(objects)
       unique_objects = uniquify_and_merge(objects)
       changed_attributes = extract_changed_attributes(unique_objects)
-      changed_attributes.unshift('id')
+      attributes = ['id'] + changed_attributes
 
       unique_objects.each_slice(batch_size(changed_attributes)) do |batch|
-        query = build_prepared_query_for(batch, changed_attributes)
-        values = values_for_objects(batch, changed_attributes)
+        query = build_prepared_query_for(batch, attributes, changed_attributes)
+        values = values_for_objects(batch, attributes)
         connection.exec_query(query, "#{name} Bulk Update", values, prepare: true)
       end
     end
@@ -66,12 +66,12 @@ module JunkDrawer
 
     def build_unprepared_query_for(objects, attributes)
       object_values = objects.map { |object| sanitized_values(object, attributes) }
-      build_query_for(attributes.unshift('id'), object_values.join(', '))
+      build_query_for(attributes, object_values.join(', '))
     end
 
-    def build_prepared_query_for(objects, attributes)
+    def build_prepared_query_for(objects, attributes, changed_attributes)
       object_placeholders = build_placeholders(objects, attributes)
-      build_query_for(attributes, object_placeholders)
+      build_query_for(changed_attributes, object_placeholders)
     end
 
     def build_query_for(attributes, values)
@@ -83,7 +83,7 @@ module JunkDrawer
       "UPDATE #{table_name} " \
       "SET #{assignment_query} " \
       "FROM (VALUES #{values}) " \
-      "AS tmp_table(#{attributes.join(', ')}) " \
+      "AS tmp_table(id, #{attributes.join(', ')}) " \
       "WHERE #{table_name}.id = tmp_table.id"
     end
 
