@@ -60,7 +60,7 @@ RSpec.describe JunkDrawer::BulkUpdatable, '.bulk_update' do
 
     it 'splits the insert into batches based on max allowable bind params' do
       connection = TestModel.connection
-      allow(connection).to receive(:bind_params_length).and_return(3)
+      allow(connection).to receive(:bind_params_length).and_return(4)
       logger = double
       allow(logger).to receive(:debug?).and_return(true)
       allow(logger).to receive(:debug)
