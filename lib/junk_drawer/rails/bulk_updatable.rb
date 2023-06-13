@@ -27,7 +27,7 @@ module JunkDrawer
       changed_attributes = extract_changed_attributes(unique_objects)
       attributes = ['id'] + changed_attributes
 
-      unique_objects.each_slice(batch_size(changed_attributes)) do |batch|
+      unique_objects.each_slice(batch_size(attributes)) do |batch|
         query = build_prepared_query_for(batch, attributes, changed_attributes)
         values = values_for_objects(batch, attributes)
         connection.exec_query(query, "#{name} Bulk Update", values, prepare: true)
